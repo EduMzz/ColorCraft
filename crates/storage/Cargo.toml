@@ -1,0 +1,18 @@
+[package]
+name = "colorcraft-storage"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+[dependencies]
+colorcraft-core.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+craft-atomic.workspace = true
+craft-settings.workspace = true
+toml = "0.9"
+blake3 = "1"
+fs2 = "0.4"
+time = { version = "0.3", features = ["formatting"] }
+[lints]
+workspace = true

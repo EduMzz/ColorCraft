@@ -1,0 +1,252 @@
+{
+  "schemaVersion": 4,
+  "id": "a7119ec4-7e24-47ad-a709-36bb5bc714f0",
+  "name": "Studio — brand system",
+  "description": "A linked brand palette with protected neutrals, semantic roles and light/dark modes.",
+  "revision": 0,
+  "items": [
+    {
+      "id": "lagoon",
+      "type": "color",
+      "parentId": null,
+      "name": "Lagoon",
+      "cssName": "lagoon",
+      "description": "",
+      "usage": "Brand accent",
+      "tags": [
+        "brand"
+      ],
+      "custom": {},
+      "rgb": [
+        39,
+        190,
+        166
+      ],
+      "locked": false
+    },
+    {
+      "id": "iris",
+      "type": "color",
+      "parentId": null,
+      "name": "Iris",
+      "cssName": "iris",
+      "description": "",
+      "usage": "Brand accent",
+      "tags": [
+        "brand"
+      ],
+      "custom": {},
+      "rgb": [
+        138,
+        111,
+        226
+      ],
+      "locked": false,
+      "directLocked": true
+    },
+    {
+      "id": "marigold",
+      "type": "color",
+      "parentId": null,
+      "name": "Marigold",
+      "cssName": "marigold",
+      "description": "",
+      "usage": "Brand accent",
+      "tags": [
+        "brand"
+      ],
+      "custom": {},
+      "rgb": [
+        246,
+        181,
+        58
+      ],
+      "locked": false
+    },
+    {
+      "id": "coral",
+      "type": "color",
+      "parentId": null,
+      "name": "Coral",
+      "cssName": "coral",
+      "description": "",
+      "usage": "Brand accent",
+      "tags": [
+        "brand"
+      ],
+      "custom": {},
+      "rgb": [
+        239,
+        112,
+        101
+      ],
+      "locked": false
+    },
+    {
+      "id": "blue",
+      "type": "color",
+      "parentId": null,
+      "name": "Open sky",
+      "cssName": "blue",
+      "description": "",
+      "usage": "Brand accent",
+      "tags": [
+        "brand"
+      ],
+      "custom": {},
+      "rgb": [
+        73,
+        144,
+        213
+      ],
+      "locked": false
+    },
+    {
+      "id": "neutrals",
+      "type": "folder",
+      "name": "Neutrals",
+      "parentId": null
+    },
+    {
+      "id": "ink",
+      "type": "color",
+      "parentId": "neutrals",
+      "name": "Ink",
+      "cssName": "ink",
+      "description": "",
+      "usage": "Text and surfaces",
+      "tags": [
+        "surface"
+      ],
+      "custom": {},
+      "rgb": [
+        29,
+        35,
+        43
+      ],
+      "locked": true
+    },
+    {
+      "id": "paper",
+      "type": "color",
+      "parentId": "neutrals",
+      "name": "Paper",
+      "cssName": "paper",
+      "description": "",
+      "usage": "Text and surfaces",
+      "tags": [
+        "surface"
+      ],
+      "custom": {},
+      "rgb": [
+        244,
+        242,
+        235
+      ],
+      "locked": false
+    },
+    {
+      "id": "sage",
+      "type": "color",
+      "parentId": "neutrals",
+      "name": "Soft sage",
+      "cssName": "sage",
+      "description": "",
+      "usage": "Text and surfaces",
+      "tags": [
+        "surface"
+      ],
+      "custom": {},
+      "rgb": [
+        133,
+        167,
+        135
+      ],
+      "locked": false
+    }
+  ],
+  "links": [
+    {
+      "id": "hue-iris",
+      "a": "lagoon",
+      "b": "iris",
+      "channels": [
+        3
+      ],
+      "relations": {
+        "3": {
+          "mode": "offset",
+          "value": 83.62338036279868
+        }
+      }
+    },
+    {
+      "id": "hue-marigold",
+      "a": "lagoon",
+      "b": "marigold",
+      "channels": [
+        3
+      ],
+      "relations": {
+        "3": {
+          "mode": "offset",
+          "value": -131.20825701000425
+        }
+      }
+    }
+  ],
+  "harmonies": [],
+  "gradients": [],
+  "limits": [
+    {
+      "id": "text-contrast",
+      "a": "ink",
+      "b": "paper",
+      "minimum": 4.5,
+      "metric": "wcag22-srgb"
+    }
+  ],
+  "profiles": [],
+  "documentaryRelations": [
+    {
+      "id": "text-on-paper",
+      "from": "ink",
+      "to": "paper",
+      "kind": "text-on",
+      "note": "Use for reading text on the light surface."
+    }
+  ],
+  "roles": [
+    {
+      "id": "accent",
+      "name": "brand.accent",
+      "colorId": "lagoon",
+      "description": "Primary brand accent"
+    },
+    {
+      "id": "text",
+      "name": "text.primary",
+      "colorId": "ink",
+      "description": "Reading text"
+    },
+    {
+      "id": "surface",
+      "name": "surface.canvas",
+      "colorId": "paper",
+      "description": "Canvas background"
+    }
+  ],
+  "modes": [
+    {
+      "id": "dark",
+      "name": "Dark",
+      "overrides": {
+        "text": "paper",
+        "surface": "ink"
+      }
+    }
+  ],
+  "sources": [],
+  "createdAt": "",
+  "updatedAt": ""
+}

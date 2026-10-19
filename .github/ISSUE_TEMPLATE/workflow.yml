@@ -1,0 +1,28 @@
+name: Palette workflow / use case
+description: Help shape ColorCraft with a real palette-engineering workflow.
+title: "Workflow: "
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: What are you making?
+      description: Your medium, intended output application and the problem you want to solve.
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: What changes, and what must stay related or fixed?
+      description: Describe the starting colors, the edit, relationships, bounds and expected result.
+    validations:
+      required: true
+  - type: textarea
+    id: example
+    attributes:
+      label: Example and current workaround
+      description: A small shareable palette or formula sketch is welcome. State sample-file rights and whether the request needs a planned feature.
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: ColorCraft version, OS, language/scale and any consuming applications.

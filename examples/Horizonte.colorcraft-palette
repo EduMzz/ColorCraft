@@ -1,0 +1,173 @@
+{
+  "createdAt": "",
+  "description": "Uma paleta para explorar, conectar e documentar cores.",
+  "documentaryRelations": [
+    {
+      "from": "b7930120-03da-4b36-9cb9-e541bc143d14",
+      "id": "exemplo-documental",
+      "kind": "texto-sobre",
+      "note": "Uso documentado; esta relação não limita os valores.",
+      "to": "b7930120-03da-4b36-9cb9-e541bc143d15"
+    }
+  ],
+  "extensions": {},
+  "format": "colorcraft-palette",
+  "items": [
+    {
+      "color": {
+        "components": [
+          0.2549019607843137,
+          0.8352941176470589,
+          0.9019607843137255
+        ],
+        "profileId": null,
+        "space": "srgb"
+      },
+      "cssName": "agua-clara",
+      "custom": {},
+      "description": "",
+      "id": "b7930120-03da-4b36-9cb9-e541bc143d11",
+      "name": "Água clara",
+      "parentId": null,
+      "previewSrgb": [
+        65.0,
+        213.0,
+        230.0
+      ],
+      "tags": [],
+      "type": "color",
+      "usage": ""
+    },
+    {
+      "color": {
+        "components": [
+          0.5725490196078431,
+          0.4588235294117647,
+          0.9372549019607843
+        ],
+        "profileId": null,
+        "space": "srgb"
+      },
+      "cssName": "violeta-do-horizonte",
+      "custom": {},
+      "description": "",
+      "id": "b7930120-03da-4b36-9cb9-e541bc143d12",
+      "name": "Violeta do horizonte",
+      "parentId": null,
+      "previewSrgb": [
+        146.0,
+        117.0,
+        239.0
+      ],
+      "tags": [],
+      "type": "color",
+      "usage": ""
+    },
+    {
+      "color": {
+        "components": [
+          0.9607843137254902,
+          0.6823529411764706,
+          0.3568627450980392
+        ],
+        "profileId": null,
+        "space": "srgb"
+      },
+      "cssName": "por-do-sol",
+      "custom": {},
+      "description": "",
+      "id": "b7930120-03da-4b36-9cb9-e541bc143d13",
+      "name": "Pôr do sol",
+      "parentId": null,
+      "previewSrgb": [
+        245.0,
+        174.0,
+        91.0
+      ],
+      "tags": [],
+      "type": "color",
+      "usage": ""
+    },
+    {
+      "color": {
+        "components": [
+          0.12156862745098039,
+          0.13333333333333333,
+          0.16470588235294117
+        ],
+        "profileId": null,
+        "space": "srgb"
+      },
+      "cssName": "texto-principal",
+      "custom": {},
+      "description": "",
+      "id": "b7930120-03da-4b36-9cb9-e541bc143d14",
+      "name": "Texto principal",
+      "parentId": null,
+      "previewSrgb": [
+        31.0,
+        34.0,
+        42.0
+      ],
+      "tags": [],
+      "type": "color",
+      "usage": "Texto em superfícies claras"
+    },
+    {
+      "color": {
+        "components": [
+          0.9647058823529412,
+          0.9490196078431372,
+          0.9058823529411765
+        ],
+        "profileId": null,
+        "space": "srgb"
+      },
+      "cssName": "papel",
+      "custom": {},
+      "description": "",
+      "id": "b7930120-03da-4b36-9cb9-e541bc143d15",
+      "name": "Papel",
+      "parentId": null,
+      "previewSrgb": [
+        246.0,
+        242.0,
+        231.0
+      ],
+      "tags": [],
+      "type": "color",
+      "usage": "Superfície padrão"
+    }
+  ],
+  "modes": [
+    {
+      "id": "escuro",
+      "name": "Escuro",
+      "overrides": {
+        "fundo": "b7930120-03da-4b36-9cb9-e541bc143d14",
+        "texto": "b7930120-03da-4b36-9cb9-e541bc143d15"
+      }
+    }
+  ],
+  "name": "Horizonte · estudo cromático",
+  "paletteId": "b7930120-03da-4b36-9cb9-e541bc143d10",
+  "previewSpace": "srgb",
+  "profiles": [],
+  "revision": 0,
+  "roles": [
+    {
+      "colorId": "b7930120-03da-4b36-9cb9-e541bc143d14",
+      "description": "Texto principal da interface",
+      "id": "texto",
+      "name": "texto.principal"
+    },
+    {
+      "colorId": "b7930120-03da-4b36-9cb9-e541bc143d15",
+      "description": "Fundo principal",
+      "id": "fundo",
+      "name": "superficie"
+    }
+  ],
+  "schemaVersion": 1,
+  "updatedAt": ""
+}

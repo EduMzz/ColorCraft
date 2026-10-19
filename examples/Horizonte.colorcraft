@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 4,
+  "id": "b7930120-03da-4b36-9cb9-e541bc143d10",
+  "name": "Horizonte · estudo cromático",
+  "description": "Uma paleta para explorar, conectar e documentar cores.",
+  "revision": 0,
+  "items": [
+    {
+      "id": "b7930120-03da-4b36-9cb9-e541bc143d11",
+      "type": "color",
+      "parentId": null,
+      "name": "Água clara",
+      "cssName": "agua-clara",
+      "description": "",
+      "usage": "",
+      "tags": [],
+      "custom": {},
+      "rgb": [
+        65.0,
+        213.0,
+        230.0
+      ],
+      "locked": false
+    },
+    {
+      "id": "b7930120-03da-4b36-9cb9-e541bc143d12",
+      "type": "color",
+      "parentId": null,
+      "name": "Violeta do horizonte",
+      "cssName": "violeta-do-horizonte",
+      "description": "",
+      "usage": "",
+      "tags": [],
+      "custom": {},
+      "rgb": [
+        146.0,
+        117.0,
+        239.0
+      ],
+      "locked": false
+    },
+    {
+      "id": "b7930120-03da-4b36-9cb9-e541bc143d13",
+      "type": "color",
+      "parentId": null,
+      "name": "Pôr do sol",
+      "cssName": "por-do-sol",
+      "description": "",
+      "usage": "",
+      "tags": [],
+      "custom": {},
+      "rgb": [
+        245.0,
+        174.0,
+        91.0
+      ],
+      "locked": false
+    },
+    {
+      "id": "b7930120-03da-4b36-9cb9-e541bc143d14",
+      "type": "color",
+      "parentId": null,
+      "name": "Texto principal",
+      "cssName": "texto-principal",
+      "description": "",
+      "usage": "Texto em superfícies claras",
+      "tags": [],
+      "custom": {},
+      "rgb": [
+        31.0,
+        34.0,
+        42.0
+      ],
+      "locked": false
+    },
+    {
+      "id": "b7930120-03da-4b36-9cb9-e541bc143d15",
+      "type": "color",
+      "parentId": null,
+      "name": "Papel",
+      "cssName": "papel",
+      "description": "",
+      "usage": "Superfície padrão",
+      "tags": [],
+      "custom": {},
+      "rgb": [
+        246.0,
+        242.0,
+        231.0
+      ],
+      "locked": false
+    }
+  ],
+  "links": [],
+  "harmonies": [],
+  "gradients": [],
+  "limits": [
+    {
+      "id": "exemplo-contraste",
+      "a": "b7930120-03da-4b36-9cb9-e541bc143d14",
+      "b": "b7930120-03da-4b36-9cb9-e541bc143d15",
+      "minimum": 4.5,
+      "metric": "wcag22-srgb"
+    }
+  ],
+  "profiles": [],
+  "documentaryRelations": [
+    {
+      "id": "exemplo-documental",
+      "from": "b7930120-03da-4b36-9cb9-e541bc143d14",
+      "to": "b7930120-03da-4b36-9cb9-e541bc143d15",
+      "kind": "texto-sobre",
+      "note": "Uso documentado; esta relação não limita os valores."
+    }
+  ],
+  "roles": [
+    {
+      "id": "texto",
+      "name": "texto.principal",
+      "colorId": "b7930120-03da-4b36-9cb9-e541bc143d14",
+      "description": "Texto principal da interface"
+    },
+    {
+      "id": "fundo",
+      "name": "superficie",
+      "colorId": "b7930120-03da-4b36-9cb9-e541bc143d15",
+      "description": "Fundo principal"
+    }
+  ],
+  "modes": [
+    {
+      "id": "escuro",
+      "name": "Escuro",
+      "overrides": {
+        "fundo": "b7930120-03da-4b36-9cb9-e541bc143d14",
+        "texto": "b7930120-03da-4b36-9cb9-e541bc143d15"
+      }
+    }
+  ],
+  "sources": [],
+  "createdAt": "",
+  "updatedAt": ""
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ColorCraft resolved palette v1",
+  "type": "object", "required": ["format", "schemaVersion", "paletteId", "name", "revision", "previewSpace", "items", "profiles", "roles", "modes", "documentaryRelations"],
+  "properties": {
+    "format": {"const": "colorcraft-palette"}, "schemaVersion": {"const": 1}, "paletteId": {"type": "string", "minLength": 1}, "name": {"type": "string"}, "description": {"type": "string"},
+    "revision": {"type": "integer", "minimum": 0}, "createdAt": {"type": "string"}, "updatedAt": {"type": "string"}, "previewSpace": {"const": "srgb"},
+    "items": {"type": "array", "maxItems": 10000, "items": {"allOf": [{"$ref": "common.schema.json#/$defs/item"}, {"if": {"properties": {"type": {"const": "color"}}}, "then": {"required": ["color", "previewSrgb"]}}]}},
+    "profiles": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/profile"}},
+    "roles": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/role"}},
+    "modes": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/mode"}},
+    "documentaryRelations": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/documentary"}},
+    "extensions": {"type": "object"},
+    "technicalAppendix": {"type": "object", "required": ["informationalOnly", "mathVersion"], "properties": {"informationalOnly": {"const": true}, "mathVersion": {"const": 1}}}
+  }
+}

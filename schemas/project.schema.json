@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ColorCraft editable project v4",
+  "description": "Structural schema. The core additionally validates references, unique IDs, folder depth, color data and source capture consistency.",
+  "type": "object", "required": ["schemaVersion", "id", "name", "items"],
+  "properties": {
+    "schemaVersion": {"const": 4}, "id": {"type": "string", "minLength": 1}, "name": {"type": "string", "maxLength": 4096}, "description": {"type": "string"},
+    "revision": {"type": "integer", "minimum": 0}, "createdAt": {"type": "string"}, "updatedAt": {"type": "string"},
+    "items": {"type": "array", "maxItems": 10000, "items": {"$ref": "common.schema.json#/$defs/item"}},
+    "profiles": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/profile"}},
+    "links": {"type": "array", "maxItems": 20000, "items": {"$ref": "common.schema.json#/$defs/link"}},
+    "harmonies": {"type": "array", "maxItems": 2000, "items": {"$ref": "common.schema.json#/$defs/harmony"}},
+    "gradients": {"type": "array", "maxItems": 2000, "items": {"$ref": "common.schema.json#/$defs/gradient"}},
+    "limits": {"type": "array", "maxItems": 20000, "items": {"$ref": "common.schema.json#/$defs/limit"}},
+    "documentaryRelations": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/documentary"}},
+    "roles": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/role"}},
+    "modes": {"type": "array", "items": {"$ref": "common.schema.json#/$defs/mode"}},
+    "sources": {"type": "array", "maxItems": 1000, "items": {"$ref": "common.schema.json#/$defs/source"}}
+  }
+}

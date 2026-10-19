@@ -1,0 +1,23 @@
+[package]
+name = "colorcraft-bridge"
+version = "0.1.0"
+edition = "2024"
+license = "MIT OR Apache-2.0"
+
+[features]
+default = ["native"]
+native = ["dep:fs2"]
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["float_roundtrip"] }
+uuid = { version = "1", features = ["v4", "serde", "js"] }
+blake3 = "1"
+url = "2"
+craft-cms = { git = "https://github.com/storytold/craft-libs", rev = "82a24b006eefa036b43c09a67fb9a3fbd17ffe63" }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+fs2 = { version = "0.4", optional = true }
+
+[lints]
+workspace = true

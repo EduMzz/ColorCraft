@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ColorCraft local library index v1",
+  "type": "object", "required": ["schemaVersion", "palettes"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "palettes": {"type": "array", "items": {
+      "type": "object", "required": ["paletteId", "revision", "name", "colors", "snapshot"],
+      "properties": {"paletteId": {"type": "string", "minLength": 1}, "revision": {"type": "integer", "minimum": 0}, "name": {"type": "string"}, "colors": {"type": "integer", "minimum": 0}, "updatedAt": {"type": "string"}, "snapshot": {"type": "string", "pattern": "^snapshots/[0-9a-f]{32}/[0-9]+-[0-9a-f]{16}\\.colorcraft-palette$"}, "sourcePath": {"type": "string"}, "preview": {"type": "array", "maxItems": 8, "items": {"$ref": "common.schema.json#/$defs/rgb"}}}
+    }}
+  }
+}

@@ -1,0 +1,11 @@
+# Local build and evaluation artifacts; keep sources, tests and examples.
+/target/
+/dist/
+/qa/
+/third-party-extra/
+/ColorCraftData/
+/plan/
+*.log
+*.tmp
+*.bak
+*.pdb

@@ -1,0 +1,19 @@
+/* ColorCraft · Horizonte · estudo cromático */
+:root {
+  /* Água clara ·  */
+  --agua-clara: rgb(65.000000 213.000000 230.000000);
+  /* Violeta do horizonte ·  */
+  --violeta-do-horizonte: rgb(146.000000 117.000000 239.000000);
+  /* Pôr do sol ·  */
+  --por-do-sol: rgb(245.000000 174.000000 91.000000);
+  /* Texto principal · Texto em superfícies claras */
+  --texto-principal: rgb(31.000000 34.000000 42.000000);
+  /* Papel · Superfície padrão */
+  --papel: rgb(246.000000 242.000000 231.000000);
+  --papel-texto-principal: var(--texto-principal);
+  --papel-superficie: var(--papel);
+}
+[data-colorcraft-mode="escuro"] {
+  --papel-texto-principal: var(--papel);
+  --papel-superficie: var(--texto-principal);
+}

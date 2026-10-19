@@ -1,0 +1,643 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "rgb": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 255
+      }
+    },
+    "native": {
+      "type": "object",
+      "required": [
+        "space",
+        "components"
+      ],
+      "properties": {
+        "space": {
+          "enum": [
+            "srgb",
+            "display-p3",
+            "lab",
+            "cmyk",
+            "gray"
+          ]
+        },
+        "components": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 4,
+          "items": {
+            "type": "number"
+          }
+        },
+        "profileId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "space": {
+                "const": "cmyk"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "components": {
+                "minItems": 4,
+                "maxItems": 4,
+                "items": {
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "space": {
+                "const": "gray"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "components": {
+                "minItems": 1,
+                "maxItems": 1,
+                "items": {
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "space": {
+                "enum": [
+                  "srgb",
+                  "display-p3"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "components": {
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "space": {
+                "const": "lab"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "components": {
+                "minItems": 3,
+                "maxItems": 3,
+                "prefixItems": [
+                  {
+                    "minimum": 0,
+                    "maximum": 100
+                  },
+                  {
+                    "minimum": -128,
+                    "maximum": 127
+                  },
+                  {
+                    "minimum": -128,
+                    "maximum": 127
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "item": {
+      "type": "object",
+      "required": [
+        "id",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "type": {
+          "enum": [
+            "color",
+            "folder"
+          ]
+        },
+        "parentId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "cssName": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "custom": {
+          "type": "object"
+        },
+        "locked": {
+          "type": "boolean"
+        },
+        "directLocked": {
+          "type": "boolean",
+          "default": false,
+          "description": "Bloqueia ediÃ§Ã£o direta; permite propagaÃ§Ã£o de relaÃ§Ãµes tÃ©cnicas."
+        },
+        "rgb": {
+          "$ref": "#/$defs/rgb"
+        },
+        "previewSrgb": {
+          "$ref": "#/$defs/rgb"
+        },
+        "color": {
+          "$ref": "#/$defs/native"
+        },
+        "sourceLocked": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "profile": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "bytes"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "array",
+          "maxItems": 4194304,
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+          }
+        }
+      }
+    },
+    "role": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "colorId"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "colorId": {
+          "type": "string",
+          "description": "Default color ID. Empty means unassigned."
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "mode": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "overrides"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "overrides": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "description": "Color ID. Empty means explicitly unassigned; a missing role inherits its default."
+          }
+        }
+      }
+    },
+    "documentary": {
+      "type": "object",
+      "required": [
+        "id",
+        "from",
+        "to",
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "from": {
+          "$ref": "#/$defs/id"
+        },
+        "to": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "link": {
+      "type": "object",
+      "required": [
+        "id",
+        "a",
+        "b",
+        "channels",
+        "relations"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "a": {
+          "$ref": "#/$defs/id"
+        },
+        "b": {
+          "$ref": "#/$defs/id"
+        },
+        "channels": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5
+          }
+        },
+        "relations": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": [
+              "mode",
+              "value"
+            ],
+            "properties": {
+              "mode": {
+                "enum": [
+                  "ratio",
+                  "offset"
+                ]
+              },
+              "value": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    },
+    "harmony": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "ids"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "type": {
+          "type": "string"
+        },
+        "ids": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "anchorId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "spread": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "a",
+              "b",
+              "offset"
+            ],
+            "properties": {
+              "a": {
+                "$ref": "#/$defs/id"
+              },
+              "b": {
+                "$ref": "#/$defs/id"
+              },
+              "offset": {
+                "type": "array",
+                "minItems": 3,
+                "maxItems": 3,
+                "items": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "gradient": {
+      "type": "object",
+      "required": [
+        "id",
+        "a",
+        "b",
+        "ids",
+        "count",
+        "space",
+        "detached"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "a": {
+          "$ref": "#/$defs/id"
+        },
+        "b": {
+          "$ref": "#/$defs/id"
+        },
+        "ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "space": {
+          "enum": [
+            "srgb",
+            "oklab",
+            "oklch"
+          ]
+        },
+        "detached": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/id"
+          }
+        }
+      }
+    },
+    "limit": {
+      "type": "object",
+      "required": [
+        "id",
+        "a",
+        "b",
+        "minimum",
+        "metric"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "a": {
+          "$ref": "#/$defs/id"
+        },
+        "b": {
+          "$ref": "#/$defs/id"
+        },
+        "minimum": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 21
+        },
+        "metric": {
+          "const": "wcag22-srgb"
+        }
+      }
+    },
+    "captureStroke": {
+      "type": "object",
+      "required": [
+        "points",
+        "radius"
+      ],
+      "properties": {
+        "points": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "maximum": 1,
+              "minimum": 0
+            },
+            "minItems": 2,
+            "maxItems": 2
+          }
+        },
+        "radius": {
+          "type": "number",
+          "maximum": 256,
+          "minimum": 0.5
+        }
+      }
+    },
+    "capture": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "colorId",
+        "page",
+        "method",
+        "position",
+        "strokes",
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "$ref": "#/$defs/rgb"
+        },
+        "colorId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "name": {
+          "type": "string"
+        },
+        "method": {
+          "type": "object"
+        },
+        "position": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "maximum": 1,
+            "minimum": 0
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "page": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "strokes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/captureStroke"
+          }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "path",
+        "storage",
+        "fingerprint",
+        "embeddedData",
+        "previewPng",
+        "pageCount",
+        "captures"
+      ],
+      "properties": {
+        "fingerprint": {
+          "type": "string"
+        },
+        "storage": {
+          "enum": [
+            "linked",
+            "embedded"
+          ]
+        },
+        "captures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/capture"
+          },
+          "maxItems": 10000
+        },
+        "path": {
+          "type": "string"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "previewPng": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "maximum": 255,
+            "minimum": 0
+          },
+          "maxItems": 1048576
+        },
+        "pageCount": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "embeddedData": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
