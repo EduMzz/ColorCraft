@@ -115,14 +115,7 @@ impl ColorCraftApp {
         let mut changed = false;
         let mut finish = false;
         let mut structural = false;
-        theme::section(ui, "roles", "Papéis semânticos");
-        ui.label(
-            RichText::new(tr(
-                "Associe funções às cores. Cada modo pode usar uma cor diferente.",
-            ))
-            .small()
-            .weak(),
-        );
+        theme::panel_title(ui, "Papéis semânticos");
         ui.add_space(8.0);
         if icons::text_button(ui, "plus", "Novo papel").clicked() {
             let mut index = roles.len() + 1;

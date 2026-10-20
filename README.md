@@ -36,7 +36,7 @@ A brand color changes. Its related hues follow. A text/background pair reaches i
 | Capability | What it gives you |
 |---|---|
 | Parametric links | Connect RGB/HSV channels across two or more colors, preserving ratios or offsets and allowing edits from different participants. |
-| Harmonies and gradients | Generate related colors and discrete ramps, including sRGB, OKLab and OKLCH interpolation. |
+| Harmonies and gradients | Generate related colors—including regular-polygon Geometry harmonies—and discrete ramps with sRGB, OKLab or OKLCH interpolation. |
 | Limiting links | Constrain an opaque sRGB pair by minimum WCAG contrast. Invalid numeric edits are rejected; constrained drags stop at the boundary. |
 | Two kinds of protection | Fix a color completely, or block direct editing while allowing changes through its relationships. |
 | Explainable conflicts | Follow a chain of colors and relationships to the blocker; remove a relationship while preserving its colors. |

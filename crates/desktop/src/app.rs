@@ -19,6 +19,16 @@ use std::{
     time::{Duration, Instant},
 };
 pub const ACCENT: Color32 = Color32::from_rgb(242, 190, 69);
+fn menu_button_padded(ui: &mut egui::Ui, label: String, contents: impl FnOnce(&mut egui::Ui)) {
+    let original_padding = ui.spacing().button_padding;
+    ui.spacing_mut().button_padding.x += 6.0;
+    ui.menu_button(label, |menu_ui| {
+        menu_ui.spacing_mut().button_padding = original_padding;
+        contents(menu_ui);
+    });
+    ui.spacing_mut().button_padding = original_padding;
+}
+
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug, Serialize, Deserialize)]
 pub enum Panel {
     Palette,
@@ -609,6 +619,8 @@ pub struct ColorCraftApp {
     pub hex_edit: String,
     pub hex_for: String,
     pub component_mode: String,
+    pub component_edit_key: String,
+    pub component_inputs: [String; 3],
     pub library_tab: bool,
     pub library: Vec<storage::LibraryEntry>,
     pub recoveries: Vec<PathBuf>,
@@ -719,6 +731,8 @@ impl ColorCraftApp {
             hex_edit: String::new(),
             hex_for: String::new(),
             component_mode: "HSV".into(),
+            component_edit_key: String::new(),
+            component_inputs: std::array::from_fn(|_| String::new()),
             library_tab: false,
             library: vec![],
             recoveries: vec![],
@@ -795,6 +809,20 @@ impl ColorCraftApp {
                     }
                 }
                 "home" => app.home = true,
+                "color-inputs" => {
+                    if let Some(doc) = app.doc_mut()
+                        && let Some(id) = doc
+                            .engine
+                            .project
+                            .colors()
+                            .next()
+                            .map(|item| item.id.clone())
+                    {
+                        doc.active = Some(id.clone());
+                        doc.selected = vec![id];
+                    }
+                    app.issue(Action::ShowPanel(Panel::Color));
+                }
                 "tree" => {
                     app.settings.update(|p| p.appearance.tree_view = true);
                 }
@@ -2140,7 +2168,7 @@ impl ColorCraftApp {
     fn menus(&mut self, ui: &mut egui::Ui) {
         let has = self.doc().is_some();
         let any = self.doc().is_some_and(|d| !d.selected.is_empty());
-        ui.menu_button(crate::i18n::tr("Arquivo"), |ui| {
+        menu_button_padded(ui, crate::i18n::tr("Arquivo"), |ui| {
             for (label, action) in [
                 ("Nova paleta     Ctrl+N", Action::New),
                 ("Abrir / importar…     Ctrl+O", Action::Open),
@@ -2211,7 +2239,7 @@ impl ColorCraftApp {
                 ui.close();
             }
         });
-        ui.menu_button(crate::i18n::tr("Editar"), |ui| {
+        menu_button_padded(ui, crate::i18n::tr("Editar"), |ui| {
             let undo = self
                 .doc()
                 .and_then(|d| d.engine.undo.last())
@@ -2287,7 +2315,7 @@ impl ColorCraftApp {
                 ui.close();
             }
         });
-        ui.menu_button(crate::i18n::tr("Paleta"), |ui| {
+        menu_button_padded(ui, crate::i18n::tr("Paleta"), |ui| {
             if ui
                 .add_enabled(has, egui::Button::new(crate::i18n::tr("Nova cor")))
                 .clicked()
@@ -2352,7 +2380,7 @@ impl ColorCraftApp {
                 ui.close();
             }
         });
-        ui.menu_button(crate::i18n::tr("Janela"), |ui| {
+        menu_button_padded(ui, crate::i18n::tr("Janela"), |ui| {
             for panel in Panel::ALL {
                 let visible = self.layout.panels().contains(&&panel);
                 if ui.selectable_label(visible, panel.label()).clicked() {
@@ -2373,7 +2401,7 @@ impl ColorCraftApp {
                 ui.close();
             }
         });
-        ui.menu_button(crate::i18n::tr("Ajuda"), |ui| {
+        menu_button_padded(ui, crate::i18n::tr("Ajuda"), |ui| {
             if ui
                 .button(crate::i18n::tr("Guia do ColorCraft     F1"))
                 .clicked()

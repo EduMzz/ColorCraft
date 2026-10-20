@@ -4,7 +4,7 @@
 
 Create a palette from Home, or open `examples/Studio.colorcraft`. Each open document has its own undo history. Colors have stable IDs; folders organize them. Cards emphasize browsing, while the tree exposes hierarchy. Ctrl adds/removes individual selections; Shift selects a visible range.
 
-Select a color to edit its wheel, numeric channels or HEX representation. The native color space is recorded separately from the sRGB display preview. Choose the interface language, theme and scale in Edit → Preferences.
+Select a color to edit its wheel, numeric channels or HEX representation. The native color space is recorded separately from the sRGB display preview. Numeric channel fields accept relative edits: `20%` reduces the current value by 20%; `-25`, `+30`, `*2` and `/2` subtract, add, multiply or divide. Hue uses the same 0–360° scale as its slider and accepts degree suffixes such as `30°` and `+15°`; its current angle is shown below. Choose the interface language, theme and scale in Edit → Preferences.
 
 ## Turn individual colors into a system
 
@@ -12,7 +12,7 @@ Select two or more colors and open Relate Colors. A parametric link shares only 
 
 For example, Studio links Lagoon's hue to Iris and Marigold. Change Lagoon's hue and those related hues move with it. Their other channels remain independent. Iris is protected against direct editing, but can follow the relationship.
 
-Harmonies generate a related family. Gradients create discrete colors between endpoints with a chosen interpolation. Creating new colors from a locked original is allowed when its value need not change. Replacing an existing color is a separate, explicit choice in the composition preview.
+Harmonies generate a related family. Geometry creates two or more colors evenly around the hue wheel, with a 360°/N interval and the source color as one vertex. Gradients create discrete colors between endpoints with a chosen interpolation. Creating new colors from a locked original is allowed when its value need not change. Replacing an existing color is a separate, explicit choice in the composition preview.
 
 The current application provides built-in rules and recipes. A free-form formula/variable editor is planned, not hidden behind an advanced setting.
 

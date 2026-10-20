@@ -88,13 +88,21 @@ Questions to settle include account ownership, access control, private/public vi
 
 Local palette engineering and file access must remain useful if a remote service is unavailable. **No cloud upload, account system, shared server or cross-device synchronization exists in the current preview.**
 
+## Additional platform clients — subject to suite guidance and team decisions
+
+The current product is a Windows x64 preview. Evaluate native **macOS and Linux clients for ColorCraft itself** as the next platform work, following the suite's platform guidance and release practices. ArtCraft applications demonstrate multi-platform delivery, but this roadmap does not assume that every application must support every suite target or that ColorCraft has been accepted into the suite.
+
+Before committing to a platform, review its native file dialogs and project handling, color/profile behavior, PDFium runtime and licensing, local palette library and bridge paths, accessibility, packaging/signing, CI coverage, release support and ongoing maintainer capacity. Keep the shared core portable where practical, while validating the complete desktop application and its user-facing workflows on each delivered target.
+
+Consider **FreeBSD or a browser client** separately only if they fit the suite's then-current roadmap and have an owner. A WebAssembly core check is not a browser application, and a browser client would need a deliberate design for local files and the local integration bridge. Do not announce support or publish a platform build until it has passed the relevant suite gates and has an agreed maintenance path.
+
 ## Adoption and release readiness
 
 - Complete code, dependency, asset-rights and provenance review.
 - Confirm maintenance responsibilities and fit alongside existing suite applications.
 - Align accepted identity, repository conventions and shared-library usage with the team.
 - Evaluate suite CI/release workflows, signing, conventional installers and Launcher catalog admission after acceptance. Adoption and release/catalog readiness are separate decisions.
-- Add and validate other native platforms; distinguish a portable core from a delivered desktop/web application.
+- Evaluate and validate macOS and Linux clients for ColorCraft, then consider other suite targets only through the review above; distinguish a portable core from a delivered desktop/web application.
 - Improve accessibility, complete language review and broaden numerical/interoperability regressions.
 
 See [ARTCRAFT-PROPOSAL.md](docs/ARTCRAFT-PROPOSAL.md) for the application-submission brief, sources and remaining gaps.

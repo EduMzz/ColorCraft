@@ -43,6 +43,9 @@ fn guidance(kind: &str) -> &str {
         "rectangle" => {
             "Comece em 45° ou 60°. A abertura separa os pares complementares. Em 90° a disposição equivale ao quadrado."
         }
+        "geometry" => {
+            "Escolha o número de cores. A primeira fica na cor de origem; as demais ocupam vértices igualmente espaçados na roda, com separação de 360° dividida pelo total."
+        }
         "gradient" => {
             "OKLab distribui as etapas de forma perceptual; OKLCH interpola matiz e cromaticidade; sRGB interpola os canais. A receita reduz cromaticidade ao gamut quando necessário. As intermediárias permanecem dependentes até serem destacadas."
         }
@@ -329,12 +332,12 @@ impl ColorCraftApp {
         if draft.kind == "gradient"
             || colorcraft_core::catalog::harmony(&draft.kind).is_some_and(|t| t.count.is_some())
         {
+            let parameter = colorcraft_core::catalog::harmony(&draft.kind).and_then(|t| t.count);
             ui.label(if draft.kind == "gradient" {
                 crate::i18n::tr("Cores intermediárias")
             } else {
-                crate::i18n::tr("Quantidade")
+                crate::i18n::tr(parameter.map_or("Quantidade", |p| p.label))
             });
-            let parameter = colorcraft_core::catalog::harmony(&draft.kind).and_then(|t| t.count);
             let old = draft.count;
             let min = parameter.map_or(1, |p| p.min as usize);
             let max = parameter.map_or(32, |p| p.max as usize);

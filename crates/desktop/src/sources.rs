@@ -622,18 +622,11 @@ impl ColorCraftApp {
             .unwrap_or_default();
         egui::Frame::new().inner_margin(12.0).show(ui, |ui| {
             ui.horizontal(|ui| {
-                ui.heading(crate::i18n::tr("Fontes"));
+                crate::theme::panel_title(ui, "Fontes");
                 if crate::icons::text_button(ui, "plus", "Adicionar fonte").clicked() {
                     self.add_source_dialog(ui.ctx());
                 }
             });
-            ui.label(
-                RichText::new(crate::i18n::tr(
-                    "Imagens, PDF e SVG · cores capturadas são adicionadas à raiz da paleta.",
-                ))
-                .small()
-                .weak(),
-            );
             ui.separator();
             egui::ScrollArea::vertical()
                 .auto_shrink([false, false])

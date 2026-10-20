@@ -404,6 +404,7 @@ const EXACT: &[(&str, &str)] = &[
     ("Análoga", "Analogous"),
     ("Tríade", "Triad"),
     ("Quadrado", "Square"),
+    ("Geometria", "Geometry"),
     ("Tétrade retangular", "Rectangular Tetrad"),
     ("Gradiente", "Gradient"),
     ("Cores intermediárias", "Intermediate Colors"),
@@ -1322,6 +1323,10 @@ const EXACT: &[(&str, &str)] = &[
         "Four hues spaced at 90° intervals.",
     ),
     (
+        "Distribui as cores igualmente pelos vértices de um polígono regular na roda de matizes.",
+        "Distributes colors evenly across the vertices of a regular polygon on the hue wheel.",
+    ),
+    (
         "Dois pares complementares; ajuste a separação entre eles.",
         "Two complementary pairs; adjust the spacing between them.",
     ),
@@ -1350,6 +1355,10 @@ const EXACT: &[(&str, &str)] = &[
         "Start at 45° or 60°. The spread separates the complementary pairs. At 90°, the arrangement is equivalent to a square.",
     ),
     (
+        "Escolha o número de cores. A primeira fica na cor de origem; as demais ocupam vértices igualmente espaçados na roda, com separação de 360° dividida pelo total.",
+        "Choose the number of colors. The first remains the source color; the others occupy evenly spaced vertices on the wheel, separated by 360° divided by the total.",
+    ),
+    (
         "OKLab distribui as etapas de forma perceptual; OKLCH interpola matiz e cromaticidade; sRGB interpola os canais. A receita reduz cromaticidade ao gamut quando necessário. As intermediárias permanecem dependentes até serem destacadas.",
         "OKLab spaces steps perceptually; OKLCH interpolates hue and chroma; sRGB interpolates channels. The recipe reduces chroma when needed to fit the gamut. Intermediate colors remain dependent until detached.",
     ),
@@ -1364,6 +1373,16 @@ const EXACT: &[(&str, &str)] = &[
     ("Separação da tétrade", "Tetrad spacing"),
     ("Abertura", "Spread"),
     ("Quantidade", "Count"),
+    ("Quantidade de cores", "Number of Colors"),
+    ("Matiz atual", "Current hue"),
+    (
+        "Digite um valor, + ou − para ajustar, * ou / para multiplicar ou dividir, e % para reduzir ou aumentar proporcionalmente. H usa graus de 0 a 360 e aceita ° ou º.",
+        "Enter a value, + or − to adjust, * or / to multiply or divide, and % to reduce or increase proportionally. H uses 0–360 degrees and accepts ° or º.",
+    ),
+    (
+        "Use um número, +/− para somar ou subtrair, * ou / para multiplicar ou dividir, e % para uma fração do valor atual. H usa a escala de 0 a 360°.",
+        "Use a number, +/− to add or subtract, * or / to multiply or divide, and % for a proportion of the current value. H uses the 0–360° scale.",
+    ),
     ("Cores intermediárias", "Intermediate Colors"),
     ("RECEITA", "RECIPE"),
     ("PRÉVIA", "PREVIEW"),

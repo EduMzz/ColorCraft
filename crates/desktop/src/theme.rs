@@ -113,6 +113,14 @@ pub fn section(ui: &mut egui::Ui, icon: &str, title: &str) {
         ui.label(egui::RichText::new(crate::i18n::tr(title)).strong());
     });
 }
+/// Consistent heading typography for top-level dock panels.
+pub fn panel_title(ui: &mut egui::Ui, title: &str) -> egui::Response {
+    ui.label(
+        egui::RichText::new(crate::i18n::tr(title))
+            .size(18.0)
+            .strong(),
+    )
+}
 pub fn chips<T: PartialEq + Clone>(
     ui: &mut egui::Ui,
     current: &mut T,

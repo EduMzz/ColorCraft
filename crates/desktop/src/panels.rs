@@ -6,6 +6,83 @@ use crate::{
 use colorcraft_core::{color, engine::Command, *};
 use eframe::egui::{self, Align2, Color32, FontId, Pos2, Rect, RichText, Sense, Stroke, Vec2};
 
+fn parse_component_input(text: &str, current: f64, hue: bool) -> Option<f64> {
+    let text = text.trim().replace(',', ".");
+    if text.is_empty() {
+        return None;
+    }
+    let (body, degrees) = if let Some(v) = text.strip_suffix('°').or_else(|| text.strip_suffix('º'))
+    {
+        (v.trim(), true)
+    } else if text.to_ascii_lowercase().ends_with("deg") {
+        (text[..text.len().checked_sub(3)?].trim(), true)
+    } else {
+        (text.as_str(), false)
+    };
+    if degrees && !hue {
+        return None;
+    }
+    let (operator, operand_text) = if let Some(v) = body.strip_prefix('+') {
+        ('+', v)
+    } else if let Some(v) = body.strip_prefix('-') {
+        ('-', v)
+    } else if let Some(v) = body.strip_prefix('*') {
+        ('*', v)
+    } else if let Some(v) = body.strip_prefix('/') {
+        ('/', v)
+    } else {
+        ('=', body)
+    };
+    let percent = body.ends_with('%');
+    let operand = operand_text
+        .strip_suffix('%')
+        .unwrap_or(operand_text)
+        .trim()
+        .parse::<f64>()
+        .ok()?;
+    if !operand.is_finite() {
+        return None;
+    }
+    let relative = |amount: f64, increase: bool| {
+        let delta = if percent {
+            current * amount / 100.0
+        } else {
+            amount
+        };
+        if increase {
+            current + delta
+        } else {
+            current - delta
+        }
+    };
+    let result = match operator {
+        '+' => relative(operand, true),
+        '-' => relative(operand, false),
+        '*' => current * if percent { operand / 100.0 } else { operand },
+        '/' => {
+            let divisor = operand;
+            if divisor == 0.0 {
+                return None;
+            }
+            current / divisor
+        }
+        _ if percent => current * (1.0 - operand / 100.0),
+        _ => operand,
+    };
+    result
+        .is_finite()
+        .then_some(if hue { color::wrap(result) } else { result })
+}
+
+fn is_hue_component(mode: &str, index: usize) -> bool {
+    (index == 0 && matches!(mode, "HSV" | "HSL")) || (index == 2 && mode == "OKLCH")
+}
+
+fn component_value(value: f64, mode: &str) -> String {
+    let decimals = if mode == "OKLCH" { 5 } else { 2 };
+    format!("{value:.decimals$}")
+}
+
 fn technical_summary(p: &Project, id: &str) -> Option<String> {
     let counts = [
         (
@@ -218,7 +295,7 @@ impl ColorCraftApp {
             })
             .show(ui, |ui| {
                 ui.set_min_width(ui.available_width());
-                self.editable_title(ui, &p.name, None, 22.0);
+                self.editable_title(ui, &p.name, None, 18.0);
                 ui.label(
                     RichText::new(crate::i18n::tr(format!(
                         "{} cores · {} pastas",
@@ -1105,7 +1182,7 @@ impl ColorCraftApp {
             .cloned()
         else {
             ui.add_space(32.0);
-            ui.heading(crate::i18n::tr("Uma cor, muitas possibilidades."));
+            crate::theme::panel_title(ui, "Cor");
             ui.label(crate::i18n::tr("Selecione uma cor da paleta para editar."));
             return;
         };
@@ -1330,20 +1407,101 @@ impl ColorCraftApp {
                     [(0.0, 360.0), (0.0, 100.0), (0.0, 100.0)],
                 ),
             };
+            let input_key = format!("{}:{}", item.id, self.component_mode);
+            if self.component_edit_key != input_key {
+                self.component_edit_key = input_key;
+                self.component_inputs =
+                    std::array::from_fn(|i| component_value(values[i], &self.component_mode));
+            }
             let mut changed = false;
             let mut continuous = false;
             let mut done = false;
             ui.add_enabled_ui(enabled, |ui| {
                 for c in 0..3 {
-                    let r = ui.add(
-                        egui::Slider::new(&mut values[c], ranges[c].0..=ranges[c].1)
-                            .clamping(egui::SliderClamping::Edits)
-                            .text(labels[c])
-                            .max_decimals(if self.component_mode == "OKLCH" { 5 } else { 2 }),
-                    );
-                    changed |= r.changed();
-                    continuous |= r.dragged();
-                    done |= r.drag_stopped() || r.lost_focus();
+                    let hue_component = is_hue_component(&self.component_mode, c);
+                    let row_width = ui.available_width().min(620.0);
+                    let gap = ui.spacing().item_spacing.x;
+                    let label_width = labels
+                        .iter()
+                        .map(|label| {
+                            ui.painter()
+                                .layout_no_wrap(
+                                    (*label).into(),
+                                    FontId::proportional(13.0),
+                                    ui.visuals().text_color(),
+                                )
+                                .size()
+                                .x
+                        })
+                        .fold(0.0_f32, f32::max)
+                        + 6.0;
+                    let available_for_columns = (row_width - gap * 2.0).max(0.0);
+                    let label_width = label_width.min(available_for_columns * 0.28);
+                    let value_width = 72.0_f32
+                        .min((available_for_columns - label_width - 24.0).max(32.0));
+                    let slider_width = (available_for_columns - label_width - value_width).max(0.0);
+                    ui.allocate_ui_with_layout(
+                        Vec2::new(ui.available_width(), 30.0),
+                        egui::Layout::top_down(egui::Align::Center),
+                        |outer| outer.allocate_ui_with_layout(
+                        Vec2::new(row_width, 30.0),
+                        egui::Layout::left_to_right(egui::Align::Center),
+                        |row| {
+                            row.spacing_mut().slider_width = slider_width;
+                        row.add_sized(Vec2::new(label_width, 28.0), egui::Label::new(labels[c]));
+                        let slider = row.add_sized(
+                            Vec2::new(slider_width, 28.0),
+                            egui::Slider::new(&mut values[c], ranges[c].0..=ranges[c].1)
+                                .clamping(egui::SliderClamping::Edits)
+                                .show_value(false)
+                                .max_decimals(if self.component_mode == "OKLCH" { 5 } else { 2 }),
+                        );
+                        changed |= slider.changed();
+                        continuous |= slider.dragged();
+                        done |= slider.drag_stopped();
+
+                        let field = row.add_sized(
+                            Vec2::new(value_width, 28.0),
+                            egui::TextEdit::singleline(&mut self.component_inputs[c])
+                                .horizontal_align(egui::Align::Center)
+                                .vertical_align(egui::Align::Center)
+                                .font(egui::TextStyle::Monospace),
+                        ).on_hover_text(crate::i18n::tr("Digite um valor, + ou − para ajustar, * ou / para multiplicar ou dividir, e % para reduzir ou aumentar proporcionalmente. H aceita graus com ° ou º."));
+                        if field.gained_focus()
+                            && let Some(mut state) =
+                                egui::text_edit::TextEditState::load(row.ctx(), field.id)
+                        {
+                            let end = egui::text::CCursor::new(
+                                self.component_inputs[c].chars().count(),
+                            );
+                            state.cursor.set_char_range(Some(egui::text::CCursorRange::two(
+                                egui::text::CCursor::new(0),
+                                end,
+                            )));
+                            state.store(row.ctx(), field.id);
+                        }
+                        let enter = field.has_focus() && row.input(|i| i.key_pressed(egui::Key::Enter));
+                        if field.lost_focus() || enter {
+                            let current_input = values[c];
+                            if let Some(input_value) = parse_component_input(&self.component_inputs[c], current_input, hue_component) {
+                                let value = if hue_component {
+                                    color::wrap(input_value)
+                                } else {
+                                    input_value.clamp(ranges[c].0, ranges[c].1)
+                                };
+                                if (value - values[c]).abs() > 1e-9 {
+                                    values[c] = value;
+                                    changed = true;
+                                    done = true;
+                                }
+                            } else {
+                                self.error = Some(crate::i18n::tr("Use um número, +/− para somar ou subtrair, * ou / para multiplicar ou dividir, e % para uma fração do valor atual. H também aceita °."));
+                            }
+                        }
+                        if !field.has_focus() {
+                            self.component_inputs[c] = component_value(values[c], &self.component_mode);
+                        }
+                    }));
                 }
             });
             if changed {
@@ -1401,19 +1559,42 @@ impl ColorCraftApp {
                     };
                     (labels.get(c).copied().unwrap_or("Canal"), 0.0..=1.0, 0.001)
                 };
-                ui.horizontal(|ui| {
-                    ui.label(label);
-                    changed |= ui
-                        .add_enabled(
-                            !item.locked && !item.source_locked && !item.direct_locked,
-                            egui::DragValue::new(v)
-                                .speed(speed)
-                                .range(range)
-                                .clamp_existing_to_range(false)
-                                .max_decimals(6),
+                let row_width = ui.available_width().min(460.0);
+                let gap = ui.spacing().item_spacing.x;
+                let label_width = 72.0_f32.min(row_width * 0.4);
+                let value_width = (row_width - gap - label_width).max(32.0);
+                ui.allocate_ui_with_layout(
+                    Vec2::new(ui.available_width(), 30.0),
+                    egui::Layout::top_down(egui::Align::Center),
+                    |outer| {
+                        outer.allocate_ui_with_layout(
+                            Vec2::new(row_width, 30.0),
+                            egui::Layout::left_to_right(egui::Align::Center),
+                            |row| {
+                                row.add_sized(
+                                    Vec2::new(label_width, 28.0),
+                                    egui::Label::new(label),
+                                );
+                                changed |= row
+                                    .add_enabled_ui(
+                                        !item.locked && !item.source_locked && !item.direct_locked,
+                                        |value_ui| {
+                                            value_ui.add_sized(
+                                                Vec2::new(value_width, 28.0),
+                                                egui::DragValue::new(v)
+                                                    .speed(speed)
+                                                    .range(range)
+                                                    .clamp_existing_to_range(false)
+                                                    .max_decimals(6),
+                                            )
+                                        },
+                                    )
+                                    .inner
+                                    .changed();
+                            },
                         )
-                        .changed();
-                });
+                    },
+                );
             }
             if changed {
                 self.issue(Action::Preview(Command::SetNative {
@@ -1502,14 +1683,7 @@ impl ColorCraftApp {
             return;
         };
         let active = self.doc().and_then(|d| d.active.clone());
-        crate::theme::section(ui, "link", "Relações da paleta");
-        ui.label(
-            RichText::new(crate::i18n::tr(
-                "Vínculos técnicos controlam valores. Relações documentais registram significado.",
-            ))
-            .small()
-            .weak(),
-        );
+        crate::theme::panel_title(ui, "Relações da paleta");
         ui.add_space(10.0);
         ui.horizontal(|ui| {
             if crate::icons::button(ui, "link", "Criar vínculo, limite ou relação documental")
@@ -1855,7 +2029,7 @@ impl ColorCraftApp {
             .and_then(|id| p.item(id))
             .cloned()
         else {
-            ui.heading(crate::i18n::tr("Detalhes do projeto"));
+            crate::theme::panel_title(ui, "Detalhes do projeto");
             ui.label(&p.name);
             ui.label(&p.description);
             if ui
@@ -1882,11 +2056,14 @@ impl ColorCraftApp {
         let mut draft = item.clone();
         let mut changed = false;
         let mut finish = false;
-        ui.heading(crate::i18n::tr(if item.kind == "folder" {
-            "Detalhes da pasta"
-        } else {
-            "Detalhes da cor"
-        }));
+        crate::theme::panel_title(
+            ui,
+            if item.kind == "folder" {
+                "Detalhes da pasta"
+            } else {
+                "Detalhes da cor"
+            },
+        );
         ui.label(
             RichText::new(crate::i18n::tr("ORGANIZAÇÃO E SIGNIFICADO"))
                 .small()
@@ -2002,5 +2179,33 @@ impl ColorCraftApp {
                 .size(10.0)
                 .weak(),
         );
+    }
+}
+
+#[cfg(test)]
+mod component_input_tests {
+    use super::parse_component_input;
+
+    #[test]
+    fn relative_component_edits_use_the_previous_value() {
+        assert_eq!(parse_component_input("20%", 80.0, false), Some(64.0));
+        assert_eq!(parse_component_input("-25", 80.0, false), Some(55.0));
+        assert_eq!(parse_component_input("+30", 80.0, false), Some(110.0));
+        assert_eq!(parse_component_input("*2", 80.0, false), Some(160.0));
+        assert_eq!(parse_component_input("/2", 80.0, false), Some(40.0));
+        assert_eq!(parse_component_input("+20%", 80.0, false), Some(96.0));
+    }
+
+    #[test]
+    fn hue_inputs_use_degrees_directly_and_wrap_at_three_hundred_sixty() {
+        let thirty_degrees = parse_component_input("30º", 180.0, true).unwrap_or(f64::NAN);
+        assert!((thirty_degrees - 30.0).abs() < 1e-10);
+        let fifteen_more_degrees = parse_component_input("+15°", 180.0, true).unwrap_or(f64::NAN);
+        assert!((fifteen_more_degrees - 195.0).abs() < 1e-10);
+        assert_eq!(parse_component_input("20%", 180.0, true), Some(144.0));
+        assert_eq!(parse_component_input("+15", 180.0, true), Some(195.0));
+        assert_eq!(parse_component_input("370", 180.0, true), Some(10.0));
+        assert!(parse_component_input("30°", 50.0, false).is_none());
+        assert!(parse_component_input("/0", 50.0, false).is_none());
     }
 }

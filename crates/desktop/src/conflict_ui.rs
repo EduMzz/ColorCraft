@@ -323,14 +323,7 @@ impl ColorCraftApp {
         };
         let p = doc.engine.project.clone();
         let entries: Vec<_> = doc.conflicts.entries.iter().cloned().collect();
-        theme::section(ui, "conflict", "Conflitos");
-        ui.label(
-            RichText::new(tr(
-                "Tentativas limitadas e conflitos desta paleta, durante esta sessão.",
-            ))
-            .small()
-            .weak(),
-        );
+        theme::panel_title(ui, "Conflitos");
         ui.add_space(8.0);
         if ui
             .add_enabled(

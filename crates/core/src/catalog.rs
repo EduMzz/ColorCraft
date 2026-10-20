@@ -155,6 +155,10 @@ const COUNT: NumberParameter = NumberParameter {
     suffix: "",
     suggestions: &[3.0, 5.0, 7.0, 9.0, 12.0],
 };
+const GEOMETRY_COUNT: NumberParameter = NumberParameter {
+    label: "Quantidade de cores",
+    ..COUNT
+};
 fn angles(base: Rgb, offsets: &[f64]) -> Vec<Rgb> {
     let [h, s, v] = color::hsv(base);
     offsets
@@ -174,6 +178,15 @@ fn scale(base: Rgb, count: usize, shades: bool) -> Vec<Rgb> {
                 v * (0.25 + 0.75 * t),
             ])
         })
+        .collect()
+}
+/// Places one hue at each vertex of a regular n-gon on the HSV hue circle.
+/// One full revolution is 360 degrees, so adjacent vertices differ by 360/n.
+fn geometry(base: Rgb, count: usize) -> Vec<Rgb> {
+    let count = count.clamp(2, 32);
+    let [h, s, v] = color::hsv(base);
+    (0..count)
+        .map(|i| color::from_hsv([h + i as f64 * 360.0 / count as f64, s, v]))
         .collect()
 }
 macro_rules! harmony {
@@ -231,6 +244,14 @@ pub const HARMONY_TYPES: &[HarmonyType] = &[
         None,
         None,
         |b, _, _| angles(b, &[0.0, 90.0, 180.0, 270.0])
+    ),
+    harmony!(
+        "geometry",
+        "Geometria",
+        "Distribui as cores igualmente pelos vértices de um polígono regular na roda de matizes.",
+        None,
+        Some(GEOMETRY_COUNT),
+        |b, _, n| geometry(b, n)
     ),
     harmony!(
         "rectangle",
@@ -300,5 +321,23 @@ mod tests {
         assert!((LIMIT_TYPES[0].build)("a".into(), "b".into(), 4.5).is_ok());
         assert!((LIMIT_TYPES[0].build)("a".into(), "a".into(), 4.5).is_err());
         assert!((PARAMETRIC_TYPES[0].build)(vec!["a".into(), "b".into()], vec![3]).is_ok());
+    }
+
+    #[test]
+    fn geometry_harmony_uses_equal_regular_polygon_angles() {
+        for count in 2..=32 {
+            let hues: Vec<_> = geometry(color::from_hsv([347.0, 0.7, 0.8]), count)
+                .into_iter()
+                .map(|rgb| color::hsv(rgb)[0])
+                .collect();
+            assert_eq!(hues.len(), count);
+            let expected = 360.0 / count as f64;
+            for pair in hues.windows(2) {
+                assert!((color::hue_delta(pair[1], pair[0]).abs() - expected).abs() < 1e-8);
+            }
+            assert!(hues.first().zip(hues.last()).is_some_and(|(first, last)| {
+                (color::hue_delta(*first, *last).abs() - expected).abs() < 1e-8
+            }));
+        }
     }
 }
