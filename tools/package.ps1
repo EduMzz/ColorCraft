@@ -83,6 +83,17 @@ try {
     }
     Set-Content -LiteralPath (Join-Path $taskPackage 'SHA256SUMS.txt') -Value $taskSums -Encoding utf8
     $taskZip = $taskPackage + '.zip'
+    # ZIP/DOS timestamps cannot represent dates before 1980 or after 2107.
+    # Third-party source archives can carry such timestamps; normalize only
+    # those copied distribution entries so Compress-Archive remains reliable.
+    $taskZipMinDate = [datetime]::new(1980, 1, 1, 0, 0, 0, [DateTimeKind]::Local)
+    $taskZipMaxDate = [datetime]::new(2107, 12, 31, 23, 59, 58, [DateTimeKind]::Local)
+    $taskZipFallbackDate = [datetime]::new(2000, 1, 1, 0, 0, 0, [DateTimeKind]::Local)
+    foreach ($taskEntry in @((Get-Item -LiteralPath $taskPackage)) + @(Get-ChildItem -LiteralPath $taskPackage -Recurse -Force)) {
+        if ($taskEntry.LastWriteTime -lt $taskZipMinDate -or $taskEntry.LastWriteTime -gt $taskZipMaxDate) {
+            $taskEntry.LastWriteTime = $taskZipFallbackDate
+        }
+    }
     Compress-Archive -LiteralPath $taskPackage -DestinationPath $taskZip -CompressionLevel Optimal
     $taskZipHash = Get-FileHash -LiteralPath $taskZip -Algorithm SHA256
     Set-Content -LiteralPath ($taskZip + '.sha256') -Value ($taskZipHash.Hash.ToLowerInvariant() + '  ' + [IO.Path]::GetFileName($taskZip)) -Encoding utf8
