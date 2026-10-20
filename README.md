@@ -47,6 +47,11 @@ A brand color changes. Its related hues follow. A text/background pair reaches i
 
 Current parametric links use the built-in channel rules. **User-authored formulas and variables are planned**, as described in the [roadmap](ROADMAP.md#user-defined-parametric-relations).
 
+Example of use:
+https://github.com/user-attachments/assets/66e44fb9-6fea-4144-a073-5996ec416c87
+
+
+
 ## Example use cases
 
 | Workflow | How ColorCraft helps |
