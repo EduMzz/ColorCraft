@@ -132,6 +132,7 @@ pub struct Paths {
     pub library: PathBuf,
     pub recovery: PathBuf,
     legacy_library: Option<PathBuf>,
+    migrate_legacy_libraries: bool,
 }
 impl Paths {
     pub fn new(store: &SettingsStore<Prefs>, override_data: Option<PathBuf>) -> Result<Self> {
@@ -178,6 +179,7 @@ impl Paths {
             recovery: data.join("recovery"),
             legacy_library: (!store.get().general.library_dir.is_empty())
                 .then(|| PathBuf::from(&store.get().general.library_dir)),
+            migrate_legacy_libraries: !isolated,
             data,
             library,
         };
@@ -186,7 +188,9 @@ impl Paths {
     pub fn prepare(&self) -> Result<()> {
         fs::create_dir_all(&self.recovery).map_err(|e| e.to_string())?;
         fs::create_dir_all(&self.library).map_err(|e| e.to_string())?;
-        merge_legacy_libraries(self)?;
+        if self.migrate_legacy_libraries {
+            merge_legacy_libraries(self)?;
+        }
         ensure_library_index(&self.library)?;
         let descriptor = serde_json::json!({"schemaVersion":1,"format":"colorcraft-library-location","libraryRoot":self.library,"index":"library.json"});
         atomic(
@@ -765,6 +769,7 @@ mod library_migration_tests {
             library: target_root.clone(),
             recovery: root.join("target-recovery"),
             legacy_library: None,
+            migrate_legacy_libraries: false,
         })
         .unwrap();
         assert_eq!(migrated.palettes.len(), 1);
